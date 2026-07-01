@@ -8,24 +8,41 @@ from PySide6.QtWidgets import (
     QTableView,
     QTableWidgetItem,
     QVBoxLayout,
-    QWidget
+    QWidget,
+    QAbstractItemView
 )
+
+
+TABLE_NAME = "history.vw_history"
+
+
+class SqlTableModel(QSqlTableModel):
+    def __init__(self):
+        super().__init__()
+
+        self.setTable(TABLE_NAME)
+        
+        self.setEditStrategy(QSqlTableModel.EditStrategy.OnRowChange)
+
+        # self.setHeaderData(3, Qt.Orientation.Horizontal, "User ID")
+        # self.setHeaderData(4, Qt.Orientation.Horizontal, "User ID")
+
+        self.select()
 
 
 class TableView(QTableView):
     def __init__(self):
         super().__init__()
 
-        self.model = QSqlTableModel(self)
-        self.model.setTable("history.vw_history")
-        self.model.setEditStrategy(QSqlTableModel.EditStrategy.OnRowChange)
-        self.model.setHeaderData(3, Qt.Orientation.Horizontal, "User ID")
-        self.model.select()
-
+        self.model = SqlTableModel()
         self.setModel(self.model)
+
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.resizeColumnsToContents()
-        self.setColumnWidth(3, 1000)
-        #self.setSelectionBehavior(QSqlTableModel.selectRow())
+
+        self.setColumnWidth(3, 300)
+        self.setColumnWidth(4, 300)
+
 
 
 class MainWindow(QMainWindow):
@@ -68,6 +85,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     window = MainWindow()
+    window.resize(2000, 1200)
     window.show()
 
     sys.exit(app.exec())
