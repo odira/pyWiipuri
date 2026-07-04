@@ -1,4 +1,3 @@
-import sys
 from PySide6.QtCore import Qt
 from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 from PySide6.QtWidgets import (
@@ -6,24 +5,65 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMessageBox,
     QTableView,
-    QTableWidgetItem,
     QVBoxLayout,
     QWidget,
-    QAbstractItemView
+    QAbstractItemView,
+    QStyledItemDelegate,
+    QTextEdit
 )
 
+import sys
 
-TABLE_NAME = "history.vw_history"
+
+DB_HOST_NAME = "217.107.219.91"
+DB_USER_NAME = "postgres"
+DB_PASSWORD = "monrepo"
+DB_DATABASE_NAME = "tercas"
+DB_TABLE_NAME = "history.vw_history"
+
+COLUMN_NAME_0 = "ID"
+COLUMN_NAME_1 = "Event ID"
+
+
+class TextEditDelegate(QStyledItemDelegate):
+    def createEditor(self, parent, option, index):
+        # Create a TextEdit when editing starts
+        editor = QTextEdit(parent)
+        editor.setStyleSheet(
+        """
+        QTextEdit {
+            border: 2px solid #3498db;
+            border-radius: 4px;
+            background-color: #ffccaa;
+        }
+        """)
+        return editor
+    
+    def setEditorData(self, editor, index):
+        # Load the data from the model into the QTextEdit
+        # value = index.model().data(index, Qt.DisplayRole)
+        # editor.setPlainText(str(value))
+
+        editor.setText(index.data())
+    
+    def setModelData(self, editor, model, index):
+        # Save the edited text back to the model
+        model.setData(index, editor.toPlainText(), Qt.EditRole)
+
+    def updateEditorGeometry(self, editor, option, index):
+        # Keep the widget bounds identical to the item cell
+        editor.setGeometry(option.rect)
 
 
 class SqlTableModel(QSqlTableModel):
     def __init__(self):
         super().__init__()
 
-        self.setTable(TABLE_NAME)
+        self.setTable(DB_TABLE_NAME)
         
         self.setEditStrategy(QSqlTableModel.EditStrategy.OnRowChange)
 
+        # self.setHeaderData(0, Qt.Orientation.Horizontal, "User ID")
         # self.setHeaderData(3, Qt.Orientation.Horizontal, "User ID")
         # self.setHeaderData(4, Qt.Orientation.Horizontal, "User ID")
 
@@ -42,6 +82,11 @@ class TableView(QTableView):
 
         self.setColumnWidth(3, 300)
         self.setColumnWidth(4, 300)
+
+        self.verticalHeader().setDefaultSectionSize(100)
+
+        delegate = TextEditDelegate()
+        self.setItemDelegateForColumn(3, delegate)
 
 
 
@@ -63,10 +108,10 @@ class MainWindow(QMainWindow):
 def createConnection():
     db = QSqlDatabase.addDatabase("QPSQL")
 
-    db.setHostName("217.107.219.91")
-    db.setPassword("monrepo")
-    db.setUserName("postgres")
-    db.setDatabaseName("tercas")
+    db.setHostName(DB_HOST_NAME)
+    db.setUserName(DB_USER_NAME)
+    db.setPassword(DB_PASSWORD)
+    db.setDatabaseName(DB_DATABASE_NAME)
 
     if not db.open():
         QMessageBox.critical(
