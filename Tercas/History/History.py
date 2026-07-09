@@ -16,7 +16,10 @@ from PySide6.QtWidgets import (
 
 import sys
 
-from ButtonDelegate import ButtonDelegate
+from TableViewDelegates import (
+    TextEditDelegate,
+    ButtonDelegate
+)
 
 
 DB_HOST_NAME = "217.107.219.91"
@@ -27,35 +30,6 @@ DB_TABLE_NAME = "history.vw_history"
 
 COLUMN_NAME_0 = "ID"
 COLUMN_NAME_1 = "Event ID"
-
-
-class TextEditDelegate(QStyledItemDelegate):
-    def createEditor(self, parent, option, index):
-        # Create a TextEdit when editing starts
-        editor = QTextEdit(parent)
-        editor.setStyleSheet(
-        """
-        QTextEdit {
-            border: 2px solid #3498db;
-            border-radius: 4px;
-            background-color: #ffccaa;
-        }
-        """)
-        return editor
-    
-    def setEditorData(self, editor, index):
-        # Load the data from the model into the QTextEdit
-        # value = index.model().data(index, Qt.DisplayRole)
-        # editor.setPlainText(str(value))
-        editor.setText(index.data())
-    
-    def setModelData(self, editor, model, index):
-        # Save the edited text back to the model
-        model.setData(index, editor.toPlainText(), Qt.EditRole)
-
-    def updateEditorGeometry(self, editor, option, index):
-        # Keep the widget bounds identical to the item cell
-        editor.setGeometry(option.rect)
 
 
 class SqlTableModel(QSqlTableModel):
@@ -71,36 +45,6 @@ class SqlTableModel(QSqlTableModel):
         # self.setHeaderData(4, Qt.Orientation.Horizontal, "User ID")
 
         self.select()
-
-    #def data(self, index, role=Qt.ItemDataRole.DisplayRole):
-    #    if index.
-
-
-# class ButtonDelegate(QStyledItemDelegate):
-#     button_clicked = Signal(QSqlTableModel)
-
-#     def createEditor(self, parent, option, index):
-#         # Create a container widget and a QPushButton
-#         self.editor = QWidget(parent)
-#         self.layout = QHBoxLayout(self.editor) 
-#         self.layout.setContentsMargins(0, 0, 0, 0)
-
-#         self.button = QPushButton("Click me", self.editor)
-#         self.button.clicked.connect(lambda: self.button_clicked.emit(index))
-
-#         self.layout.addWidget(self.button)
-#         self.editor.setLayout(self.layout)
-
-#         return self.editor
-
-#     def setEditorData(self, editor, index):
-#         pass
-
-#     def setModelData(self, editor, model, index):
-#         pass
-
-#     def updateEditorGeometry(self, editor, option, index):
-#         editor.setGeometry(option.rect)
 
 
 class TableView(QTableView):
@@ -121,8 +65,8 @@ class TableView(QTableView):
         self.verticalHeader().setDefaultSectionSize(100)
         self.horizontalHeader().setStretchLastSection(True)
 
-        delegate = TextEditDelegate()
-        self.setItemDelegateForColumn(3, delegate)
+        self.textEditDelegate = TextEditDelegate()
+        self.setItemDelegateForColumn(2, self.textEditDelegate)
 
         btn = QPushButton("Click Me")
         btn.clicked.connect(lambda: print("Button clicked!"))

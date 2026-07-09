@@ -40,3 +40,32 @@ class ButtonDelegate(QStyledItemDelegate):
 
     def updateEditorGeometry(self, editor, option, index):
         editor.setGeometry(option.rect)
+
+
+class TextEditDelegate(QStyledItemDelegate):
+    def createEditor(self, parent, option, index):
+        # Create a TextEdit when editing starts
+        editor = QTextEdit(parent)
+        editor.setStyleSheet(
+        """
+        QTextEdit {
+            border: 2px solid #3498db;
+            border-radius: 4px;
+            background-color: #ffccaa;
+        }
+        """)
+        return editor
+    
+    def setEditorData(self, editor, index):
+        # Load the data from the model into the QTextEdit
+        # value = index.model().data(index, Qt.DisplayRole)
+        # editor.setPlainText(str(value))
+        editor.setText(index.data())
+    
+    def setModelData(self, editor, model, index):
+        # Save the edited text back to the model
+        model.setData(index, editor.toPlainText(), Qt.EditRole)
+
+    def updateEditorGeometry(self, editor, option, index):
+        # Keep the widget bounds identical to the item cell
+        editor.setGeometry(option.rect)
