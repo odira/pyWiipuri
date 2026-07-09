@@ -122,8 +122,6 @@ class TableView(QTableView):
         delegate = TextEditDelegate()
         self.setItemDelegateForColumn(3, delegate)
 
-        self.selectRow(0)
-
         btn = QPushButton("Click Me")
         btn.clicked.connect(lambda: print("Button clicked!"))
         target_index = self.model.index(1, 1)
@@ -136,6 +134,7 @@ class TableView(QTableView):
             index = self.model.index(row, 6)
             self.openPersistentEditor(index)
 
+        self.selectRow(0)
 
 
 class MainWindow(QMainWindow):
