@@ -33,6 +33,7 @@ class ButtonDelegate(QStyledItemDelegate):
         return self.editor
 
     def setEditorData(self, editor, index):
+        # editor.setText(index.data())
         pass
 
     def setModelData(self, editor, model, index):
