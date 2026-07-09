@@ -1,15 +1,17 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
     QMessageBox,
     QTableView,
-    QVBoxLayout,
+    QVBoxLayout, QHBoxLayout,
     QWidget,
     QAbstractItemView,
     QStyledItemDelegate,
-    QTextEdit
+    QTextEdit,
+    QLabel,
+    QPushButton
 )
 
 import sys
@@ -43,7 +45,6 @@ class TextEditDelegate(QStyledItemDelegate):
         # Load the data from the model into the QTextEdit
         # value = index.model().data(index, Qt.DisplayRole)
         # editor.setPlainText(str(value))
-
         editor.setText(index.data())
     
     def setModelData(self, editor, model, index):
@@ -69,6 +70,36 @@ class SqlTableModel(QSqlTableModel):
 
         self.select()
 
+    #def data(self, index, role=Qt.ItemDataRole.DisplayRole):
+    #    if index.
+
+
+class ButtonDelegate(QStyledItemDelegate):
+    button_clicked = Signal(QSqlTableModel)
+
+    def createEditor(self, parent, option, index):
+        # Create a container widget and a QPushButton
+        self.editor = QWidget(parent)
+        self.layout = QHBoxLayout(self.editor) 
+        self.layout.setContentsMargins(0, 0, 0, 0)
+
+        self.button = QPushButton("Click me", self.editor)
+        self.button.clicked.connect(lambda: self.button_clicked.emit(index))
+
+        self.layout.addWidget(self.button)
+        self.editor.setLayout(self.layout)
+
+        return self.editor
+
+    def setEditorData(self, editor, index):
+        pass
+
+    def setModelData(self, editor, model, index):
+        pass
+
+    def updateEditorGeometry(self, editor, option, index):
+        editor.setGeometry(option.rect)
+
 
 class TableView(QTableView):
     def __init__(self):
@@ -77,16 +108,33 @@ class TableView(QTableView):
         self.model = SqlTableModel()
         self.setModel(self.model)
 
+        self.setAlternatingRowColors(True)
         self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.resizeColumnsToContents()
 
         self.setColumnWidth(3, 300)
         self.setColumnWidth(4, 300)
 
         self.verticalHeader().setDefaultSectionSize(100)
+        self.horizontalHeader().setStretchLastSection(True)
 
         delegate = TextEditDelegate()
         self.setItemDelegateForColumn(3, delegate)
+
+        self.selectRow(0)
+
+        btn = QPushButton("Click Me")
+        btn.clicked.connect(lambda: print("Button clicked!"))
+        target_index = self.model.index(1, 1)
+        self.setIndexWidget(target_index, btn)
+
+        self.buttonDelegate = ButtonDelegate()
+        self.setItemDelegateForColumn(6, self.buttonDelegate)
+
+        for row in range(self.model.rowCount()):
+            index = self.model.index(row, 6)
+            self.openPersistentEditor(index)
 
 
 
