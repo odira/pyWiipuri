@@ -16,6 +16,8 @@ from PySide6.QtWidgets import (
 
 import sys
 
+from ButtonDelegate import ButtonDelegate
+
 
 DB_HOST_NAME = "217.107.219.91"
 DB_USER_NAME = "postgres"
@@ -74,31 +76,31 @@ class SqlTableModel(QSqlTableModel):
     #    if index.
 
 
-class ButtonDelegate(QStyledItemDelegate):
-    button_clicked = Signal(QSqlTableModel)
+# class ButtonDelegate(QStyledItemDelegate):
+#     button_clicked = Signal(QSqlTableModel)
 
-    def createEditor(self, parent, option, index):
-        # Create a container widget and a QPushButton
-        self.editor = QWidget(parent)
-        self.layout = QHBoxLayout(self.editor) 
-        self.layout.setContentsMargins(0, 0, 0, 0)
+#     def createEditor(self, parent, option, index):
+#         # Create a container widget and a QPushButton
+#         self.editor = QWidget(parent)
+#         self.layout = QHBoxLayout(self.editor) 
+#         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        self.button = QPushButton("Click me", self.editor)
-        self.button.clicked.connect(lambda: self.button_clicked.emit(index))
+#         self.button = QPushButton("Click me", self.editor)
+#         self.button.clicked.connect(lambda: self.button_clicked.emit(index))
 
-        self.layout.addWidget(self.button)
-        self.editor.setLayout(self.layout)
+#         self.layout.addWidget(self.button)
+#         self.editor.setLayout(self.layout)
 
-        return self.editor
+#         return self.editor
 
-    def setEditorData(self, editor, index):
-        pass
+#     def setEditorData(self, editor, index):
+#         pass
 
-    def setModelData(self, editor, model, index):
-        pass
+#     def setModelData(self, editor, model, index):
+#         pass
 
-    def updateEditorGeometry(self, editor, option, index):
-        editor.setGeometry(option.rect)
+#     def updateEditorGeometry(self, editor, option, index):
+#         editor.setGeometry(option.rect)
 
 
 class TableView(QTableView):
