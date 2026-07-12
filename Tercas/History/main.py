@@ -17,8 +17,8 @@ from PySide6.QtWidgets import (
 import sys
 
 from TableViewDelegates import (
-    TextEditDelegate,
-    ButtonDelegate
+    ButtonDelegate,
+    TextEditDelegate
 )
 
 
@@ -46,7 +46,7 @@ class SqlTableModel(QSqlTableModel):
 
         self.select()
 
-
+        
 class TableView(QTableView):
     def __init__(self):
         super().__init__()
