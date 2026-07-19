@@ -6,9 +6,15 @@ from PySide6.QtCore import (
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
-    QTableView
+    QTableView,
+    QMessageBox
 )
 from PySide6.QtCore import Qt
+from PySide6.QtSql import (
+    QSqlDatabase,
+    QSqlTableModel,
+    QSqlQuery
+)
 
 
 class TableModel(QAbstractTableModel):
@@ -33,6 +39,13 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.setWindowTitle("Manufacturers Database")
+        self.resize(2000, 1000)
+
+        if not self.create_connection():
+            QMessageBox.critical(self, "Error", "Could not connected to database.")
+            return 1
+
         self.table = QTableView()
 
         data = [
@@ -47,6 +60,9 @@ class MainWindow(QMainWindow):
         self.table.setModel(self.model)
 
         self.setCentralWidget(self.table)
+
+    def create_connection(self):
+        return True
 
 
 
