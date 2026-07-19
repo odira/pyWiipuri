@@ -1,16 +1,10 @@
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from PySide6.QtSql import QSqlTableModel
 from PySide6.QtWidgets import (
-    QApplication,
-    QMainWindow,
-    QMessageBox,
-    QTableView,
-    QVBoxLayout, QHBoxLayout,
+    QHBoxLayout,
     QWidget,
-    QAbstractItemView,
     QStyledItemDelegate,
     QTextEdit,
-    QLabel,
     QPushButton
 )
 
@@ -24,7 +18,9 @@ class ButtonDelegate(QStyledItemDelegate):
         self.layout = QHBoxLayout(self.editor) 
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        self.button = QPushButton("Click me", self.editor)
+        self.data = index.data()
+
+        self.button = QPushButton(self.data, self.editor)
         self.button.clicked.connect(lambda: self.button_clicked.emit(index))
 
         self.layout.addWidget(self.button)
@@ -55,6 +51,7 @@ class TextEditDelegate(QStyledItemDelegate):
             background-color: #ffccaa;
         }
         """)
+        editor.setText("test")
         return editor
     
     def setEditorData(self, editor, index):

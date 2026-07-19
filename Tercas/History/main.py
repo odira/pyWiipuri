@@ -31,6 +31,10 @@ DB_TABLE_NAME = "history.vw_history"
 COLUMN_NAME_0 = "ID"
 COLUMN_NAME_1 = "Event ID"
 
+column_headers = [
+    "ID", "Event ID"
+]
+
 
 class SqlTableModel(QSqlTableModel):
     def __init__(self):
@@ -43,6 +47,8 @@ class SqlTableModel(QSqlTableModel):
         # self.setHeaderData(0, Qt.Orientation.Horizontal, "User ID")
         # self.setHeaderData(3, Qt.Orientation.Horizontal, "User ID")
         # self.setHeaderData(4, Qt.Orientation.Horizontal, "User ID")
+
+        # self.setHorizontalHeaderLabals(column_headers)
 
         self.select()
 
@@ -68,17 +74,17 @@ class TableView(QTableView):
         self.textEditDelegate = TextEditDelegate()
         self.setItemDelegateForColumn(2, self.textEditDelegate)
 
-        btn = QPushButton("Click Me")
-        btn.clicked.connect(lambda: print("Button clicked!"))
-        target_index = self.model.index(1, 1)
-        self.setIndexWidget(target_index, btn)
+        # btn = QPushButton("click Me")
+        # btn.clicked.connect(lambda: print("Button clicked!"))
+        # target_index = self.model.index(1, 1)
+        # self.setIndexWidget(target_index, btn)
 
         self.buttonDelegate = ButtonDelegate()
         self.setItemDelegateForColumn(6, self.buttonDelegate)
 
-        for row in range(self.model.rowCount()):
-            index = self.model.index(row, 6)
-            self.openPersistentEditor(index)
+        # for row in range(self.model.rowCount()):
+        #     index = self.model.index(row, 6)
+        #     self.openPersistentEditor(index)
 
         self.selectRow(0)
 
